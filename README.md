@@ -1,8 +1,8 @@
-# Ansible Role: Certbot (for Let's Encrypt)
+# Ansible Role: Certbot (for Let's Encrypt and others)
 
 [![CI](https://github.com/geerlingguy/ansible-role-certbot/workflows/CI/badge.svg?event=push)](https://github.com/geerlingguy/ansible-role-certbot/actions?query=workflow%3ACI)
 
-Installs and configures Certbot (for Let's Encrypt).
+Installs and configures Certbot (for Let's Encrypt and others).
 
 ## Requirements
 
@@ -155,6 +155,14 @@ You can test the auto-renewal (without actually renewing the cert) with the comm
     /opt/certbot/certbot-auto renew --dry-run
 
 See full documentation and options on the [Certbot website](https://certbot.eff.org/).
+
+## Usage with other ACME providers
+
+This role has been preliminarily tested with Sectigo certificates. Be sure that to override the following variables with your provider's ACME URL and your account's keys:
+
+    certbot_server: "https://acme.myprovider.com"
+    certbot_eab_kid: "replaceme"
+    certbot_eab_hmac: "replaceme"
 
 ## License
 

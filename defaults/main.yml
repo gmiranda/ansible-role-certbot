@@ -6,6 +6,12 @@ certbot_auto_renew_hour: "3"
 certbot_auto_renew_minute: "30"
 certbot_auto_renew_options: "--quiet --no-self-upgrade"
 
+# Replace these vars when using a different provider
+certbot_server: "https://acme.myprovider.com"
+certbot_eab_kid: "replaceme"
+certbot_eab_hmac: "replaceme"
+
+# Untested
 certbot_testmode: false
 certbot_hsts: false
 
@@ -32,6 +38,8 @@ certbot_create_command: >-
   {{ '--hsts' if certbot_hsts else '' }}
   {{ '--test-cert' if certbot_testmode else '' }}
   --noninteractive --agree-tos
+  --server {{ certbot_server  }}
+  --eab-kid {{ certbot_eab_kid }} --eab-hmac-key {{ certbot_eab_hmac }}
   --email {{ cert_item.email | default(certbot_admin_email) }}
   {{ '--webroot-path ' if certbot_create_method == 'webroot'  else '' }}
   {{ cert_item.webroot | default(certbot_webroot) if certbot_create_method == 'webroot' else '' }}
