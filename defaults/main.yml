@@ -19,13 +19,16 @@ certbot_hsts: false
 # Parameters used when creating new Certbot certs.
 certbot_create_if_missing: false
 certbot_create_method: standalone
+certbot_create_extra_args: ""
 certbot_admin_email: email@example.com
+certbot_expand: false
 
 # Default webroot, overwritten by individual per-cert webroot directories
 certbot_webroot: /var/www/letsencrypt
 
 certbot_certs: []
-# - email: janedoe@example.com
+# - name: example.com
+#   email: janedoe@example.com
 #   webroot: "/var/www/html/"
 #   domains:
 #     - example1.com
@@ -41,15 +44,21 @@ certbot_create_command: >-
   --server {{ certbot_server  }}
   --eab-kid {{ certbot_eab_kid }} --eab-hmac-key {{ certbot_eab_hmac }}
   --email {{ cert_item.email | default(certbot_admin_email) }}
+  {{ '--expand' if certbot_expand else '' }}
   {{ '--webroot-path ' if certbot_create_method == 'webroot'  else '' }}
   {{ cert_item.webroot | default(certbot_webroot) if certbot_create_method == 'webroot' else '' }}
   {{ certbot_create_extra_args }}
+  --cert-name {{ cert_item_name }}
   -d {{ cert_item.domains | join(',') }}
+  {{ '--expand' if certbot_expand else '' }}
   {{ '--pre-hook /etc/letsencrypt/renewal-hooks/pre/stop_services'
     if certbot_create_standalone_stop_services and certbot_create_method == 'standalone'
   else '' }}
   {{ '--post-hook /etc/letsencrypt/renewal-hooks/post/start_services'
     if certbot_create_standalone_stop_services and certbot_create_method == 'standalone'
+  else '' }}
+  {{ "--deploy-hook '" ~ cert_item.deploy_hook ~ "'"
+    if 'deploy_hook' in cert_item
   else '' }}
 
 certbot_create_standalone_stop_services:
